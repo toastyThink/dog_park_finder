@@ -1,0 +1,5 @@
+MVP: 
+
+get Lat and Long data point for dog parks --> from api 
+
+store those data points somewhere in app.
