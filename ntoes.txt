@@ -3,3 +3,65 @@ MVP:
 get Lat and Long data point for dog parks --> from api 
 
 store those data points somewhere in app.
+
+
+Places Component for Google Places API:
+
+
+import { useState, useEffect } from "react";
+// import {useMapsLibrary} from '@vis.gl/react-google-maps';
+import config from '../../../config/config.jsx';
+import '../MapComponent.css'
+
+const key = config.PLACE_KEY
+
+function Places(){
+    const [place, setPlace] = useState([])
+ 
+    // const placesLibrary = useMapsLibrary('places');
+    // const [placesService, setPlacesService] = useState(null)
+    
+    // useEffect(() => {
+    // if(!placesLibrary) return(console.log('api library not connected'));
+    
+    // },[placesLibrary]);
+
+    // useEffect(()=>{
+    //     if(!placesService) return(console.log('placesService not connected'))
+    // }, [placesService]);
+
+ async function handleSubmit(e){
+    e.preventDefault()                      //location is the string associated with name in the input field
+    const value = encodeURI(e.currentTarget.location.value);
+    setPlace(value);
+
+    //   console.log(place)
+    //     const url = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?fields=formatted_address%2Cname%2Cgeometry&input=${place}&inputtype=textquery&key=${key}`;
+        
+    //     try{
+    //         const response = await fetch(url, {method: "GET", mode:"no-cors"});
+    //         console.log(response)
+    //         const data = await response;
+    //         console.log(data)
+    //     }catch(err){
+    //         console.log(err)
+    //     }
+    // }
+
+    useEffect(() => {
+        handleSubmit
+    },[])
+
+    return (
+    <> 
+        <search className="searchForm" >
+            <form onSubmit={ (e) => {handleSubmit(e)}} >
+                <input type="text" name="location" id="search" placeholder="Search a location for surrounding dog parks!" />
+                <button type="submit">Search</button>
+            </form>
+        </search>
+    </>
+    )
+}
+
+export default Places
