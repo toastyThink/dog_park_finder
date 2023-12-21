@@ -52,16 +52,34 @@ export default function MapComponent(){
     if(!place.lat || !place.long){
         return (
         <>
+         <h1 className="font-bold text-2xl">Loading...please enter coordinates. Omit spacing when typing</h1>
+         <br/>
             <search className="searchForm" >
                 <form onSubmit={ (e) => {handleData(e)}} >
-                     <p>Latitude:</p>  <input type="text" value={place.lat} onChange={handleChange} name="lat" id="search1" placeholder="Type a Latitude coordinate here"  required/>
-                    <p>Longitude:</p>  <input type="text" value={place.long} onChange={handleChange} name="long" id="search2" placeholder="Type a Longitude coordinate here" required/>
-                    <button type="submit">Search: click me twice</button>
+                     <p className="m-4 font-bold text-2xl">Latitude:</p>  <input type="text" className="w-3/12 h-14 m-4 rounded-xl font-bold text-2xl bg-indigo-500 bg-neutral-300	text-stone-950" value={place.lat} onChange={handleChange} name="lat" id="search1" placeholder="Type a Latitude coordinate here"  required/>
+                    <p className="m-4 font-bold text-2xl">Longitude:</p>  <input type="text" className="w-3/12 h-14 m-4 rounded-xl font-bold text-2xl bg-indigo-500 bg-neutral-300	text-stone-950" value={place.long} onChange={handleChange} name="long" id="search2" placeholder="Type a Longitude coordinate here" required/>
+                    <button className="bg-indigo-500 m-4 rounded-xl	w-52 h-16 font-bold text-2xl" type="submit">Search</button>
                 </form>
             </search>
             
-            <h1>Loading...please enter coordinates. Omit spacing when typing</h1>
+           
         </>
+        )
+    }else if(place.lat === "-" || place.long === "-"){
+        return (
+            <>
+             <h1 className="font-bold text-2xl">Loading...please enter coordinates. Omit spacing when typing</h1>
+             <br/>
+                <search className="searchForm" >
+                    <form onSubmit={ (e) => {handleData(e)}} >
+                         <p className="m-4 font-bold text-2xl">Latitude:</p>  <input type="text" className="w-3/12 h-14 m-4 rounded-xl font-bold text-2xl bg-indigo-500 bg-neutral-300	text-stone-950" value={place.lat} onChange={handleChange} name="lat" id="search1" placeholder="Type a Latitude coordinate here"  required/>
+                        <p className="m-4 font-bold text-2xl">Longitude:</p>  <input type="text" className="w-3/12 h-14 m-4 rounded-xl font-bold text-2xl bg-indigo-500 bg-neutral-300	text-stone-950" value={place.long} onChange={handleChange} name="long" id="search2" placeholder="Type a Longitude coordinate here" required/>
+                        <button className="bg-indigo-500 m-4 rounded-xl	w-52 h-16 font-bold text-2xl" type="submit">Search</button>
+                    </form>
+                </search>
+                
+               
+            </>
         )
     }
 
@@ -70,9 +88,9 @@ return(
 
             <search className="searchForm" >
                     <form onSubmit={ (e) => {handleData(e)}} >
-                      <p>Latitude:</p>  <input type="text" value={place.lat} onChange={handleChange} name="lat" id="search1" placeholder="Type a Latitude coordinate here"  required/>
-                      <p>Longitude:</p>  <input type="text" value={place.long} onChange={handleChange} name="long" id="search2" placeholder="Type a Longitude coordinate here" required/>
-                        <button type="submit">Search</button>
+                      <p className="m-4 font-bold text-2xl">Latitude:</p>  <input type="text" className="w-3/12 h-14 m-4 rounded-xl font-bold text-2xl bg-indigo-500 bg-neutral-300	text-stone-950" value={place.lat} onChange={handleChange} name="lat" id="search1" placeholder="Type a Latitude coordinate here"  required/>
+                      <p className="m-4 font-bold text-2xl">Longitude:</p>  <input type="text" className="w-3/12 h-14 m-4 rounded-xl font-bold text-2xl bg-indigo-500 bg-neutral-300 text-stone-950"value={place.long} onChange={handleChange} name="long" id="search2" placeholder="Type a Longitude coordinate here" required/>
+                        <button className="bg-indigo-500 m-4 rounded-xl	w-52 h-16 font-bold text-2xl" type="submit">Search</button>
                     </form>
                 </search>
 
@@ -86,7 +104,7 @@ return(
                     key={d.properties.place_id} 
                     position={{lat: d.properties.lat, lng: d.properties.lon}}
                     >
-                    <h2>{d.properties.address_line1}</h2>
+                    <div className="font-bold text-base italic" key={d.properties.place_id+38}>{d.properties.address_line1}</div>
                    </AdvancedMarker>
                 </>
                 ))}

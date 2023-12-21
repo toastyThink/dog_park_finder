@@ -1,8 +1,36 @@
-# React + Vite
+# D🐶g Park Findr 
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Have you ever wondered what dog parks or pet friendly parks are nearby? D🐶g Park Findr is the answer! You can search in the surrounding radius of specified coordinates! Instead of browsing online endlessly, save time by simply entering the coordinates of an area. D🐶g Park Findr has your bacK!
 
-Currently, two official plugins are available:
+An example of searching for dog parks in New York City: 
+![Alt text](src/assets/Public/image.png)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Please Note: When first opened, the app may not display the initial map markers for the default coordinates. However, after entering in specified coordinates of a location it will begin to populate the map. Remember to leave out spaces when your type. Accidentally including spaces in a coordinate will throw and error.
+
+
+
+Technologies Used: 
+-------------------------------
+Google Maps API: https://developers.google.com/maps/documentation/javascript/libraries-open-source
+
+Geoapify: https://www.geoapify.com/
+
+Tailwindcsc: https://tailwindcss.com/
+
+HTML
+
+CSS
+
+JavaScript
+
+React
+
+Git / Github
+
+Vite
+
+Node.js
+
+
+The Trello Board for planning: https://trello.com/b/Z0ERfOGs/dog-park-finder
+
