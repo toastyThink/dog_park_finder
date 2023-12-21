@@ -3,12 +3,8 @@
 import { useState, useEffect } from "react";
 import { 
     AdvancedMarker,
-    // Marker,
     APIProvider,
-    // InfoWindow,
     Map,
-    // useAdvancedMarkerRef,
-    // Pin
   } from '@vis.gl/react-google-maps';
 
 import './MapComponent.css'
@@ -16,70 +12,73 @@ import './MapComponent.css'
 import config from "../../config/config";
 const key = config.API_KEY;
 const geoKey = config.GEO_KEY;
-// const mylibraries = ["places"]
+
 const mapContainerStyle = {
     width: "100%",
     height: "100vh"
 }
-
 const zoom = 14.5;
-
-const center = {
-    lat: 40.730610,
-    lng: -73.935242
-}
-
-
 
 export default function MapComponent(){
     const [dogParks, setDogParks] = useState([]);
+
     const [place, setPlace] = useState({
-        lat: "",
-        long: ""
+        lat: 40.70296394394688,
+        long: -73.99854101503041
     });
 
-    async function handleData(){
-        const url = `https://api.geoapify.com/v2/places?categories=pet.dog_park&filter=circle:-73.99854101503041,40.702963943946884,5000&bias=proximity:-73.99854101503041,40.702963943946884&limit=20&apiKey=${geoKey}`
-    try{
-    const response = await fetch(url, {method: "GET"});
-    const data = await response.json();
-    console.log(data)
-    setDogParks(data.features)
-    }catch(err){
-    console.log(err)
+    async function handleData(e){
+            e.preventDefault()
+
+            const url = `https://api.geoapify.com/v2/places?categories=pet.dog_park&filter=circle:${place.long},${place.lat},5000&bias=proximity:${place.long},${place.lat}&limit=20&apiKey=${geoKey}`
+        try{
+            const response = await fetch(url, {method: "GET"});
+            const data = await response.json();
+            setDogParks(data.features)
+        
+        }catch(err){
+        console.log(err)
+        }
     }
-}
+
     useEffect(() => {
         handleData()
     }, []);
-    
-    console.log(dogParks);
 
-    async function handleSubmit(e){
-        e.preventDefault()                      //location is the string associated with name in the input field
-        const latValue = e.currentTarget.latitude.value;
-        const longValue = e.currentTarget.longitude.value;
-        setPlace({...place.lat = latValue});
-        setPlace({...place.long = longValue});
+    function handleChange(e){
+        setPlace({...place, [e.target.name]: e.target.value});
+    }
+ 
+    if(!place.lat || !place.long){
+        return (
+        <>
+            <search className="searchForm" >
+                <form onSubmit={ (e) => {handleData(e)}} >
+                     <p>Latitude:</p>  <input type="text" value={place.lat} onChange={handleChange} name="lat" id="search1" placeholder="Type a Latitude coordinate here"  required/>
+                    <p>Longitude:</p>  <input type="text" value={place.long} onChange={handleChange} name="long" id="search2" placeholder="Type a Longitude coordinate here" required/>
+                    <button type="submit">Search: click me twice</button>
+                </form>
+            </search>
+            
+            <h1>Loading...please enter coordinates. Omit spacing when typing</h1>
+        </>
+        )
     }
 
-    useEffect(() => {
-        handleSubmit
-    },[])
-
-    return(
+return(
         <APIProvider apiKey={key} libraries={['places']}>
-            <Map className="map" mapId={'c23b025437a4833d'} zoom={zoom} center={center} mapContainerStyle={mapContainerStyle}>
-           
-               <search className="searchForm" >
-                    <form onSubmit={ (e) => {handleSubmit(e)}} >
-                        <input type="text" name="latitude" id="search1" placeholder="Type a Latitude here" />
-                        <input type="text" name="longitude" id="search2" placeholder="Type a Longitude here" />
+
+            <search className="searchForm" >
+                    <form onSubmit={ (e) => {handleData(e)}} >
+                      <p>Latitude:</p>  <input type="text" value={place.lat} onChange={handleChange} name="lat" id="search1" placeholder="Type a Latitude coordinate here"  required/>
+                      <p>Longitude:</p>  <input type="text" value={place.long} onChange={handleChange} name="long" id="search2" placeholder="Type a Longitude coordinate here" required/>
                         <button type="submit">Search</button>
                     </form>
                 </search>
+
+            <Map className="map" mapId={'c23b025437a4833d'} zoom={zoom} center={{lat: parseFloat(place.lat), lng: parseFloat(place.long)}} mapContainerStyle={mapContainerStyle}>
+
                { dogParks?.map( (d) => (
-     
                  <>
                     <AdvancedMarker
                     className="nameTag"
@@ -92,11 +91,9 @@ export default function MapComponent(){
                 </>
                 ))}
            </Map>
+
        </APIProvider>
     )
 }
-
-
-
 
 
