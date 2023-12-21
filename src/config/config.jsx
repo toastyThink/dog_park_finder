@@ -1,5 +1,6 @@
-const { VITE_GOOGLE_MAPS_API_KEY} = import.meta.env 
+const { VITE_GOOGLE_MAPS_API_KEY, VITE_GEOAPIFY_API_KEY} = import.meta.env 
 
 export default {
-    API_KEY: VITE_GOOGLE_MAPS_API_KEY
+    API_KEY: VITE_GOOGLE_MAPS_API_KEY,
+    GEO_KEY: VITE_GEOAPIFY_API_KEY, 
 }

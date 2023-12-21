@@ -1,168 +1,117 @@
 
-import {
-    GoogleMap,
-    useLoadScript,
-    // Marker,
-    // InfoWindow
-} from "@react-google-maps/api"
+
+import { useState, useEffect } from "react";
+import { 
+    AdvancedMarker,
+    APIProvider,
+    Map,
+  } from '@vis.gl/react-google-maps';
 
 import './MapComponent.css'
 
 import config from "../../config/config";
-const key = config.API_KEY
-const mylibraries = ["places"]
+const key = config.API_KEY;
+const geoKey = config.GEO_KEY;
+
 const mapContainerStyle = {
     width: "100%",
     height: "100vh"
 }
-
 const zoom = 14.5;
 
-const center = {
-    lat: 40.730610,
-    lng: -73.935242
-}
-
-///////Fetch Dog Parks API////////////////////////////////////////////////////
-import axios from 'axios';
-
-const options = {
-  method: 'POST',
-  url: 'https://pipican-dog-park-and-dog-beach-locator-api.p.rapidapi.com/nearby-basic',
-  headers: {
-    'content-type': 'application/json',
-    'X-RapidAPI-Key': 'f154102b88mshd921a87113282dap1097e9jsn89d5230e6eee',
-    'X-RapidAPI-Host': 'pipican-dog-park-and-dog-beach-locator-api.p.rapidapi.com'
-  },
-  data: {
-    coords: {
-      lat: 42.361145,
-      lng: -71.057083
-    },
-    radius: 1,
-    leisure: 'dog_park'
-  }
-};
-
-try {
-	const response = await axios.request(options);
-	console.log(response.data);
-} catch (error) {
-	console.error(error);
-}
-//////////////////////////////////////////////////////////////////////////////
-
 export default function MapComponent(){
-    const {isLoaded, loadError} = useLoadScript({
-        googleMapsApiKey: key,
-        libraries: mylibraries
-    })
+    const [dogParks, setDogParks] = useState([]);
 
-    if(loadError) return "Error loading maps";
-    if(!isLoaded) return "Loading Maps"; 
+    const [place, setPlace] = useState({
+        lat: 40.70296394394688,
+        long: -73.99854101503041
+    });
 
-    if(loadError){
-        return console.log(loadError)
+    async function handleData(e){
+            e.preventDefault()
+
+            const url = `https://api.geoapify.com/v2/places?categories=pet.dog_park&filter=circle:${place.long},${place.lat},5000&bias=proximity:${place.long},${place.lat}&limit=20&apiKey=${geoKey}`
+        try{
+            const response = await fetch(url, {method: "GET"});
+            const data = await response.json();
+            setDogParks(data.features)
+        
+        }catch(err){
+        console.log(err)
+        }
     }
 
-    return(
-        <div className="map">
-            <GoogleMap mapContainerStyle={mapContainerStyle} zoom={zoom} center={center}></GoogleMap>
-        </div>
+    useEffect(() => {
+        handleData()
+    }, []);
+
+    function handleChange(e){
+        setPlace({...place, [e.target.name]: e.target.value});
+    }
+ 
+    if(!place.lat || !place.long){
+        return (
+        <>
+         <h1 className="font-bold text-2xl">Loading...please enter coordinates. Omit spacing when typing</h1>
+         <br/>
+            <search className="searchForm" >
+                <form onSubmit={ (e) => {handleData(e)}} >
+                     <p className="m-4 font-bold text-2xl">Latitude:</p>  <input type="text" className="w-3/12 h-14 m-4 rounded-xl font-bold text-2xl bg-indigo-500 bg-neutral-300	text-stone-950" value={place.lat} onChange={handleChange} name="lat" id="search1" placeholder="Type a Latitude coordinate here"  required/>
+                    <p className="m-4 font-bold text-2xl">Longitude:</p>  <input type="text" className="w-3/12 h-14 m-4 rounded-xl font-bold text-2xl bg-indigo-500 bg-neutral-300	text-stone-950" value={place.long} onChange={handleChange} name="long" id="search2" placeholder="Type a Longitude coordinate here" required/>
+                    <button className="bg-indigo-500 m-4 rounded-xl	w-52 h-16 font-bold text-2xl" type="submit">Search</button>
+                </form>
+            </search>
+            
+           
+        </>
+        )
+    }else if(place.lat === "-" || place.long === "-"){
+        return (
+            <>
+             <h1 className="font-bold text-2xl">Loading...please enter coordinates. Omit spacing when typing</h1>
+             <br/>
+                <search className="searchForm" >
+                    <form onSubmit={ (e) => {handleData(e)}} >
+                         <p className="m-4 font-bold text-2xl">Latitude:</p>  <input type="text" className="w-3/12 h-14 m-4 rounded-xl font-bold text-2xl bg-indigo-500 bg-neutral-300	text-stone-950" value={place.lat} onChange={handleChange} name="lat" id="search1" placeholder="Type a Latitude coordinate here"  required/>
+                        <p className="m-4 font-bold text-2xl">Longitude:</p>  <input type="text" className="w-3/12 h-14 m-4 rounded-xl font-bold text-2xl bg-indigo-500 bg-neutral-300	text-stone-950" value={place.long} onChange={handleChange} name="long" id="search2" placeholder="Type a Longitude coordinate here" required/>
+                        <button className="bg-indigo-500 m-4 rounded-xl	w-52 h-16 font-bold text-2xl" type="submit">Search</button>
+                    </form>
+                </search>
+                
+               
+            </>
+        )
+    }
+
+return(
+        <APIProvider apiKey={key} libraries={['places']}>
+
+            <search className="searchForm" >
+                    <form onSubmit={ (e) => {handleData(e)}} >
+                      <p className="m-4 font-bold text-2xl">Latitude:</p>  <input type="text" className="w-3/12 h-14 m-4 rounded-xl font-bold text-2xl bg-indigo-500 bg-neutral-300	text-stone-950" value={place.lat} onChange={handleChange} name="lat" id="search1" placeholder="Type a Latitude coordinate here"  required/>
+                      <p className="m-4 font-bold text-2xl">Longitude:</p>  <input type="text" className="w-3/12 h-14 m-4 rounded-xl font-bold text-2xl bg-indigo-500 bg-neutral-300 text-stone-950"value={place.long} onChange={handleChange} name="long" id="search2" placeholder="Type a Longitude coordinate here" required/>
+                        <button className="bg-indigo-500 m-4 rounded-xl	w-52 h-16 font-bold text-2xl" type="submit">Search</button>
+                    </form>
+                </search>
+
+            <Map className="map" mapId={'c23b025437a4833d'} zoom={zoom} center={{lat: parseFloat(place.lat), lng: parseFloat(place.long)}} mapContainerStyle={mapContainerStyle}>
+
+               { dogParks?.map( (d) => (
+                 <>
+                    <AdvancedMarker
+                    className="nameTag"
+                    title={"Name: " + d.properties.address_line1} 
+                    key={d.properties.place_id} 
+                    position={{lat: d.properties.lat, lng: d.properties.lon}}
+                    >
+                    <div className="font-bold text-base italic" key={d.properties.place_id+38}>{d.properties.address_line1}</div>
+                   </AdvancedMarker>
+                </>
+                ))}
+           </Map>
+
+       </APIProvider>
     )
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-//=======================================================
-// import React from "react";
-
-// import {APIProvider, Map} from '@vis.gl/react-google-maps';
-// import config from "../../config/config";
-// const key = config.API_KEY
-
-// const center = {lat: 22.54992, lng: 0}
-
-
-// const App = () => {
-//     <APIProvider apiKey={key}>
-//       <Map
-//         zoom={3}
-//         center={{lat: 22.54992, lng: 0}}
-//         gestureHandling={'greedy'}
-//         disableDefaultUI={true}
-//       ></Map>
-//     </APIProvider>
-// };
-
-// async function MapComponent(){
-//     return(
-//         <>
-//           <App />
-//       </>
-//     )
-// }
-
-// export default MapComponent
-
-
-//============================================================================
-// import {APIProvider, Map, Marker} from '@vis.gl/react-google-maps';
-
-// import './MapComponent.css' 
-// import config from '../../config/config';
-
-
-// export default function MapComponent(){
-//     const key = config.API_KEY
-//     const position = {lat: 53.54992, lng: 10.00678}
-
-//     return (
-//         <div >
-//             <APIProvider apiKey="AIzaSyCvRro--4MgP4H8OGq_FiJoXp-HeN-765s">
-//             <Map center={position} zoom={10}>
-//                 <Marker position={position} />
-//             </Map>
-//             </APIProvider>
-//         </div>
-//     )
-// }
-//=====================================================================
-// import { Loader } from "@googlemaps/js-api-loader";
-// import config from "../../config/config";
-
-// const key = config.API_KEY
-
-// const loader = new Loader({
-//     apiKey: key,
-//     version: "weekly",
-//   });
-  
-//   loader.load().then(async () => {
-//     const { Map } = await google.maps.importLibrary("maps");
-  
-//    const map = new Map(document.getElementById("map"), {
-//       center: { lat: -34.397, lng: 150.644 },
-//       zoom: 8,
-//     });
-//   });
-
-// export default function MapComponent(){
-
-//     return(
-//         <>
-//         <div id="map" style={{height:'100vh', width:'100%'}}></div>
-//         </>
-//     )
-    
-// }
